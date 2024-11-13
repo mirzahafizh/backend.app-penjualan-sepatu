@@ -15,7 +15,12 @@ require('dotenv').config(); // Load environment variables from .env file
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS if necessary
+
+const corsOptions = {
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+};
+app.use(cors(corsOptions)); // Enable CORS if necessary
 app.use(bodyParser.json()); // Parse JSON request bodies
 
 // Use user routes
