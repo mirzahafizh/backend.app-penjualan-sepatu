@@ -1,5 +1,4 @@
 const { Transaksi,ProdukSepatu } = require('../models');
-const sequelize = require('../config/database');
 const mysql = require('mysql2/promise');
 // Create a new transaction
 const createTransaction = async (req, res) => {
