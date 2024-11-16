@@ -18,7 +18,7 @@ const createComment = async (req, res) => {
       comment_text,
     });
 
-    res.status(201).json({
+    res.status(200).json({
       message: 'Comment added successfully',
       comment: newComment,
     });
