@@ -9,11 +9,8 @@
       }
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/app.js"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/app.js" }
   ],
   "headers": [
     {
@@ -21,11 +18,11 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://backend-app-penjualan-sepatu.vercel.app"
+          "value": "*"
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET,POST,PUT,DELETE,OPTIONS"
+          "value": "GET,POST,PUT,DELETE"
         },
         {
           "key": "Access-Control-Allow-Headers",
