@@ -17,7 +17,6 @@ const app = express();
 // Middleware
 
 const corsOptions = {
-  origin: ['https://backend-app-penjualan-sepatu.vercel.app'], // Allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
 };
