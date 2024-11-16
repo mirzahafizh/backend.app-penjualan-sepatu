@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'comments', // Nama tabel yang sesuai dengan konvensi snake_case
     modelName: 'Comment', // Nama model sesuai dengan PascalCase
   });
+  
 
   Comment.associate = function(models) {
     // Definisikan asosiasi antara model
