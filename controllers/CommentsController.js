@@ -31,10 +31,15 @@ const createComment = async (req, res) => {
       comment: newComment,
     });
   } catch (error) {
-    console.error('Error adding comment:', error); // Debug: Log error details
+    console.error('Error adding comment:'); // Debug: Log general error message
+    console.error('Error type:', error.name); // Debug: Log error type (e.g., Sequelize error, Validation error)
+    console.error('Error message:', error.message); // Debug: Log error message
+    console.error('Error stack:', error.stack); // Debug: Log stack trace for deeper debugging
+
     res.status(500).json({ error: 'Failed to add comment' });
   }
 };
+
 
 // Get all comments for a product
 const getCommentsByProduct = async (req, res) => {
