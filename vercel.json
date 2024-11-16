@@ -21,7 +21,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "*"
+          "value": "https://backend-app-penjualan-sepatu.vercel.app"
         },
         {
           "key": "Access-Control-Allow-Methods",
