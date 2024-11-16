@@ -1,41 +1,40 @@
 const { Comment, ProdukSepatu, User } = require('../models');
 
 // Create a new comment
+
+// Create a new comment
 const createComment = async (req, res) => {
   try {
+    console.log('Request body:', req.body); // Debug: Log request body
+
     const { product_id, user_id, comment_text } = req.body;
 
-    // Validasi input
-    if (!product_id || !user_id || !comment_text) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
-
-    // Log request body untuk debugging
-    console.log('Request body:', req.body);
-
-    // Validasi apakah produk ada
+    console.log('Validating if product exists...'); // Debug: Step log
+    // Validate if the product exists
     const product = await ProdukSepatu.findByPk(product_id);
     if (!product) {
+      console.log(`Product with id ${product_id} not found`); // Debug: Product not found
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Buat komentar
+    console.log('Creating a new comment...'); // Debug: Step log
+    // Create the comment
     const newComment = await Comment.create({
       product_id,
-      user_id,
+      user_id, // Can be null for anonymous comments
       comment_text,
     });
 
+    console.log('Comment created successfully:', newComment); // Debug: Log created comment
     res.status(200).json({
       message: 'Comment added successfully',
       comment: newComment,
     });
   } catch (error) {
-    console.error('Error adding comment:', error);
+    console.error('Error adding comment:', error); // Debug: Log error details
     res.status(500).json({ error: 'Failed to add comment' });
   }
 };
-
 
 // Get all comments for a product
 const getCommentsByProduct = async (req, res) => {
