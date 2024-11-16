@@ -12,10 +12,10 @@ const createTransaction = async (req, res) => {
 
         // Buat koneksi ke database
         const connection = await mysql.createConnection({
-            host: 'localhost',  // Ganti dengan host database Anda
-            user: 'root',       // Ganti dengan username Anda
-            password: 'root', // Ganti dengan password Anda
-            database: 'db_penjualan_sepatu' // Ganti dengan nama database Anda
+            host: process.env.DB_HOST,
+            user: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
         });
 
         // Memulai transaksi
