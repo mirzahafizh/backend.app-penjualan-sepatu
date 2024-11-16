@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   
 
+
   Comment.associate = function(models) {
     // Definisikan asosiasi antara model
     Comment.belongsTo(models.ProdukSepatu, { foreignKey: 'product_id' });
