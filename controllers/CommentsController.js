@@ -5,16 +5,24 @@ const createComment = async (req, res) => {
   try {
     const { product_id, user_id, comment_text } = req.body;
 
-    // Validate if the product exists
+    // Validasi input
+    if (!product_id || !user_id || !comment_text) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    // Log request body untuk debugging
+    console.log('Request body:', req.body);
+
+    // Validasi apakah produk ada
     const product = await ProdukSepatu.findByPk(product_id);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Create the comment
+    // Buat komentar
     const newComment = await Comment.create({
       product_id,
-      user_id, // Can be null for anonymous comments
+      user_id,
       comment_text,
     });
 
@@ -27,6 +35,7 @@ const createComment = async (req, res) => {
     res.status(500).json({ error: 'Failed to add comment' });
   }
 };
+
 
 // Get all comments for a product
 const getCommentsByProduct = async (req, res) => {
