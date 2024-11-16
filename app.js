@@ -17,10 +17,12 @@ const app = express();
 // Middleware
 
 const corsOptions = {
+  origin: ['https://backend-app-penjualan-sepatu.vercel.app'], // Allowed origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
 };
-app.use(cors(corsOptions)); // Enable CORS if necessary
+app.use(cors(corsOptions)); // Enable CORS
+
 app.use(bodyParser.json()); // Parse JSON request bodies
 
 // Use user routes
