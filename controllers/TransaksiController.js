@@ -3,11 +3,13 @@ const mysql = require('mysql2/promise');
 // Create a new transaction
 const createTransaction = async (req, res) => {
     try {
-        const { userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, quantity, ukuran } = req.body;
+        const { userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, quantity, ukuran, orderId } = req.body;
 
         // Validasi input
-        if (!userId || !totalAmount || !paymentMethod || !produkSepatuId || !quantity || !ukuran) {
-            return res.status(400).json({ error: 'User ID, total amount, payment method, product ID, quantity, and ukuran are required.' });
+        if (!userId || !totalAmount || !paymentMethod || !produkSepatuId || !quantity || !ukuran || !orderId) {
+            return res.status(400).json({ 
+                error: 'User ID, total amount, payment method, product ID, quantity, ukuran, and order ID are required.' 
+            });
         }
 
         // Buat koneksi ke database
@@ -18,7 +20,6 @@ const createTransaction = async (req, res) => {
             database: process.env.DB_DATABASE,
         });
 
-        
         // Memulai transaksi
         await connection.beginTransaction();
 
@@ -27,8 +28,8 @@ const createTransaction = async (req, res) => {
 
             // Membuat transaksi baru
             const [newTransaction] = await connection.execute(
-                'INSERT INTO transaksi (userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, ukuran, transactionDate) VALUES (?, ?, ?, ?, ?, ?, ?)',
-                [userId, totalAmount, paymentMethod, paymentStatus || 'pending', produkSepatuId, ukuran, transactionDate] // Menambahkan transactionDate
+                'INSERT INTO transaksi (orderId, userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, ukuran, transactionDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [orderId, userId, totalAmount, paymentMethod, paymentStatus || 'pending', produkSepatuId, ukuran, transactionDate]
             );
 
             // Mengambil produk dan stoknya
@@ -45,19 +46,13 @@ const createTransaction = async (req, res) => {
             const sizes = JSON.parse(product.ukuran);
             const stock = product.stok;
 
-            console.log('Product:', product);
-            console.log('Sizes:', sizes);
-            console.log('Stock:', stock);
-
             // Mencari indeks ukuran yang dipilih
             const sizeIndex = sizes.indexOf(ukuran);
-            console.log('Size Index:', sizeIndex);
             if (sizeIndex === -1) {
                 throw new Error('Selected size not available');
             }
 
             // Memastikan stok cukup untuk ukuran yang dipilih
-            console.log('Available stock for selected size:', stock[sizeIndex]);
             if (stock[sizeIndex] < quantity) {
                 throw new Error('Not enough stock available');
             }
@@ -65,18 +60,24 @@ const createTransaction = async (req, res) => {
             // Mengurangi stok untuk ukuran yang dipilih
             stock[sizeIndex] -= quantity;
 
-            console.log('Updated Stock:', stock);
-
             // Memperbarui stok produk dalam database
             await connection.execute(
                 'UPDATE produk_sepatu SET stok = ? WHERE id = ?',
                 [JSON.stringify(stock), produkSepatuId]
             );
-            console.log('Stok setelah update:', stock);
 
             // Commit transaksi
             await connection.commit();
-            res.status(201).json({ id: newTransaction.insertId, userId, totalAmount, paymentMethod, paymentStatus: paymentStatus || 'pending', produkSepatuId, ukuran });
+            res.status(201).json({
+                id: newTransaction.insertId,
+                orderId,
+                userId,
+                totalAmount,
+                paymentMethod,
+                paymentStatus: paymentStatus || 'pending',
+                produkSepatuId,
+                ukuran
+            });
         } catch (error) {
             await connection.rollback();
             console.error('Error during transaction:', error);
@@ -89,6 +90,7 @@ const createTransaction = async (req, res) => {
         res.status(500).json({ error: 'Failed to create transaction' });
     }
 };
+
 
 // Get all transactions for a user
 const getUserTransactions = async (req, res) => {

@@ -1,13 +1,11 @@
-const { Comment, ProdukSepatu, User } = require('../models');
-
-// Create a new comment
+const { Comment, ProdukSepatu, User, Transaksi } = require('../models');
 
 // Create a new comment
 const createComment = async (req, res) => {
   try {
     console.log('Request body:', req.body); // Debug: Log request body
 
-    const { product_id, user_id, comment_text } = req.body;
+    const { product_id, user_id, comment_text, isRatingEnabled, orderId } = req.body;
 
     console.log('Validating if product exists...'); // Debug: Step log
     // Validate if the product exists
@@ -17,12 +15,24 @@ const createComment = async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
+    console.log('Validating if order exists...'); // Debug: Step log
+    // Validate if the order exists (optional, based on your logic)
+    if (orderId) {
+      const order = await Transaksi.findByPk(orderId);
+      if (!order) {
+        console.log(`Order with id ${orderId} not found`); // Debug: Order not found
+        return res.status(404).json({ error: 'Order not found' });
+      }
+    }
+
     console.log('Creating a new comment...'); // Debug: Step log
     // Create the comment
     const newComment = await Comment.create({
       product_id,
       user_id, // Can be null for anonymous comments
       comment_text,
+      isRatingEnabled: isRatingEnabled !== undefined ? isRatingEnabled : true, // Default to true if not provided
+      orderId, // Optional, can be null if not provided
     });
 
     console.log('Comment created successfully:', newComment); // Debug: Log created comment
@@ -40,17 +50,28 @@ const createComment = async (req, res) => {
   }
 };
 
-
 // Get all comments for a product
 const getCommentsByProduct = async (req, res) => {
   try {
     const { product_id } = req.params;
 
+    console.log('Fetching comments for product_id:', product_id); // Debug: Log product ID
+
     // Fetch all comments for the given product
     const comments = await Comment.findAll({
       where: { product_id },
-      include: [{ model: User, attributes: ['id', 'fullName'] }],
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'fullName'],
+        },
+      ],
     });
+
+    if (comments.length === 0) {
+      console.log(`No comments found for product_id ${product_id}`); // Debug: No comments found
+      return res.status(404).json({ error: 'No comments found for this product' });
+    }
 
     res.status(200).json(comments);
   } catch (error) {
@@ -63,6 +84,8 @@ const getCommentsByProduct = async (req, res) => {
 const deleteComment = async (req, res) => {
   try {
     const { id } = req.params;
+
+    console.log('Fetching comment to delete with id:', id); // Debug: Log comment ID
 
     // Find the comment
     const comment = await Comment.findByPk(id);

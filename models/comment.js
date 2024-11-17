@@ -1,20 +1,18 @@
-'use strict';
-
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
     product_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'ProdukSepatu', // Pastikan nama model yang benar
+        model: 'ProdukSepatu',
         key: 'id',
       },
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Allow anonymous comments
+      allowNull: true,
       references: {
-        model: 'User', // Pastikan nama model yang benar
+        model: 'User',
         key: 'id',
       },
     },
@@ -22,15 +20,28 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    isRatingEnabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true, // default: rating aktif
+      allowNull: false,
+    },
+    orderId: {
+      type: DataTypes.INTEGER,
+      allowNull: true, // Kolom ini bersifat opsional
+      references: {
+        model: 'Transaksi', // Asumsi bahwa Anda memiliki model Transaksi
+        key: 'id', // Pastikan key yang digunakan di model Transaksi adalah 'id'
+      },
+    },
   }, {
-    tableName: 'comments', // Nama tabel yang sesuai dengan konvensi snake_case
-    modelName: 'Comment', // Nama model sesuai dengan PascalCase
+    tableName: 'comments',
+    modelName: 'Comment',
   });
 
   Comment.associate = function(models) {
-    // Definisikan asosiasi antara model
     Comment.belongsTo(models.ProdukSepatu, { foreignKey: 'product_id' });
     Comment.belongsTo(models.User, { foreignKey: 'user_id' });
+    Comment.belongsTo(models.Transaksi, { foreignKey: 'orderId' }); // Asosiasi dengan model Transaksi
   };
 
   return Comment;
