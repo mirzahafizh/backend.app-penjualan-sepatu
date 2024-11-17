@@ -63,6 +63,11 @@ module.exports = (sequelize) => {
                 type: DataTypes.STRING, // Adjust type as needed (STRING for sizes like "42", "M", etc.)
                 allowNull: false,
             },
+            isRatingEnabled: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: true, // default: rating aktif
+                allowNull: false,
+            },
         },
         {
             sequelize,

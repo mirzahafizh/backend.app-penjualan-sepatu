@@ -36,9 +36,20 @@ const createComment = async (req, res) => {
     });
 
     console.log('Comment created successfully:', newComment); // Debug: Log created comment
+
+    // Jika berhasil, update `isRatingEnabled` di tabel Transaksi menjadi 0
+    if (orderId) {
+      const updatedOrder = await Transaksi.findByPk(orderId);
+      if (updatedOrder) {
+        // Update isRatingEnabled menjadi 0 di tabel Transaksi
+        await updatedOrder.update({ isRatingEnabled: 0 });
+        console.log(`Order with id ${orderId} updated: isRatingEnabled set to 0`);
+      }
+    }
+
     res.status(200).json({
       message: 'Comment added successfully',
-      comment: newComment,
+      comment: newComment, // Return the created comment
     });
   } catch (error) {
     console.error('Error adding comment:'); // Debug: Log general error message
@@ -46,9 +57,14 @@ const createComment = async (req, res) => {
     console.error('Error message:', error.message); // Debug: Log error message
     console.error('Error stack:', error.stack); // Debug: Log stack trace for deeper debugging
 
-    res.status(500).json({ error: 'Failed to add comment' });
+    // Jika gagal, pastikan `isRatingEnabled` tetap 1 pada response
+    res.status(500).json({
+      error: 'Failed to add comment',
+      isRatingEnabled: 1, // Set `isRatingEnabled` to 1 in case of failure
+    });
   }
 };
+
 
 // Get all comments for a product
 const getCommentsByProduct = async (req, res) => {
