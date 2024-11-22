@@ -28,7 +28,7 @@ const createTransaction = async (req, res) => {
 
             // Membuat transaksi baru
             const [newTransaction] = await connection.execute(
-                'INSERT INTO transaksi ( userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, ukuran, transactionDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                'INSERT INTO transaksi ( userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, ukuran, transactionDate) VALUES (?, ?, ?, ?, ?, ?, ?)',
                 [userId, totalAmount, paymentMethod, paymentStatus || 'pending', produkSepatuId, ukuran, transactionDate]
             );
 
