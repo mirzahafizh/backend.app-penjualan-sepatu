@@ -3,10 +3,10 @@ const mysql = require('mysql2/promise');
 // Create a new transaction
 const createTransaction = async (req, res) => {
     try {
-        const { userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, quantity, ukuran, orderId } = req.body;
+        const { userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, quantity, ukuran } = req.body;
 
         // Validasi input
-        if (!userId || !totalAmount || !paymentMethod || !produkSepatuId || !quantity || !ukuran || !orderId) {
+        if (!userId || !totalAmount || !paymentMethod || !produkSepatuId || !quantity || !ukuran ) {
             return res.status(400).json({ 
                 error: 'User ID, total amount, payment method, product ID, quantity, ukuran, and order ID are required.' 
             });
@@ -28,8 +28,8 @@ const createTransaction = async (req, res) => {
 
             // Membuat transaksi baru
             const [newTransaction] = await connection.execute(
-                'INSERT INTO transaksi (orderId, userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, ukuran, transactionDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                [orderId, userId, totalAmount, paymentMethod, paymentStatus || 'pending', produkSepatuId, ukuran, transactionDate]
+                'INSERT INTO transaksi ( userId, totalAmount, paymentMethod, paymentStatus, produkSepatuId, ukuran, transactionDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [userId, totalAmount, paymentMethod, paymentStatus || 'pending', produkSepatuId, ukuran, transactionDate]
             );
 
             // Mengambil produk dan stoknya
@@ -70,7 +70,7 @@ const createTransaction = async (req, res) => {
             await connection.commit();
             res.status(201).json({
                 id: newTransaction.insertId,
-                orderId,
+
                 userId,
                 totalAmount,
                 paymentMethod,
