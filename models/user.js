@@ -39,10 +39,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      phoneNumber: { // New phoneNumber column
+      phoneNumber: {
         type: DataTypes.STRING,
-        allowNull: true, // Set to false if phone number is required
-      },
+        allowNull: true,  // or false, depending on your requirements
+    },
+    
     },
     {
       sequelize,

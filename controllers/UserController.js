@@ -21,6 +21,7 @@ const registerUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: 'User already exists' });
         }
+
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -39,14 +40,15 @@ const registerUser = async (req, res) => {
             fullName,
             email,
             password: hashedPassword,
-            role: role || 'user',
-            address,
-            phoneNumber: phoneNumber || null, // Default to null if phoneNumber is not provided
-            image: imageUrl,
+            role: role || 'user', // Default role is 'user'
+            phoneNumber,
+            address, // Include address
+            image: imageUrl, // Include image URL
         });
+
         res.status(201).json({
             message: 'User registered successfully',
-            user: { id: newUser.id, fullName: newUser.fullName, email: newUser.email, role: newUser.role, address: newUser.address,phoneNumber: newUser.phoneNumber, image: newUser.image },
+            user: { id: newUser.id, fullName: newUser.fullName, email: newUser.email, role: newUser.role, address: newUser.address, phoneNumber: newUser.phoneNumber, image: newUser.image },
         });
     } catch (error) {
         console.error('Error registering user:', error);
@@ -68,10 +70,10 @@ const updateUser = async (req, res) => {
         const updateData = {
             fullName,
             email,
-            address,
-            phoneNumber, // Include address
+            address, // Include address
+            phoneNumber, // Ensure phoneNumber is included
         };
-
+        
         // Hash the password if it's provided
         if (password) {
             const hashedPassword = await bcrypt.hash(password, 10); // Hash the password with 10 rounds
