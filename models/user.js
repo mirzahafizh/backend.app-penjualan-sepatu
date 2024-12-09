@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -33,19 +31,23 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 'user', // Default role is user
       },
-      image: {  // New image column
+      image: {  
         type: DataTypes.STRING,
-        allowNull: true, // Change to false if required
+        allowNull: true, 
       },
-      address: { // New address column
+      address: { 
         type: DataTypes.STRING,
-        allowNull: true, // Change to false if required
+        allowNull: true,
+      },
+      phoneNumber: { // New phoneNumber column
+        type: DataTypes.STRING,
+        allowNull: true, // Set to false if phone number is required
       },
     },
     {
       sequelize,
       modelName: 'User',
-      tableName: 'users', // Ensure the correct table name
+      tableName: 'users',
     }
   );
 
