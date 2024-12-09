@@ -14,7 +14,7 @@ const imagekit = new ImageKit({
 // Register a new user
 const registerUser = async (req, res) => {
     try {
-        const { fullName, email, password, role, address } = req.body;
+        const { fullName, email, password, role, address,phoneNumber } = req.body;
 
         // Check if the user already exists
         const existingUser = await User.findOne({ where: { email } });
@@ -42,12 +42,13 @@ const registerUser = async (req, res) => {
             password: hashedPassword,
             role: role || 'user', // Default role is 'user'
             address, // Include address
+            phoneNumber,
             image: imageUrl, // Include image URL
         });
 
         res.status(201).json({
             message: 'User registered successfully',
-            user: { id: newUser.id, fullName: newUser.fullName, email: newUser.email, role: newUser.role, address: newUser.address, image: newUser.image },
+            user: { id: newUser.id, fullName: newUser.fullName, email: newUser.email, role: newUser.role, address: newUser.address,phoneNumber: newUser.phoneNumber, image: newUser.image },
         });
     } catch (error) {
         console.error('Error registering user:', error);
@@ -58,7 +59,7 @@ const registerUser = async (req, res) => {
 // Update user
 const updateUser = async (req, res) => {
     try {
-        const { fullName, email, password, address } = req.body;
+        const { fullName, email, password, address,phoneNumber } = req.body;
 
         const user = await User.findByPk(req.params.id);
         if (!user) {
@@ -69,7 +70,8 @@ const updateUser = async (req, res) => {
         const updateData = {
             fullName,
             email,
-            address, // Include address
+            address,
+            phoneNumber, // Include address
         };
 
         // Hash the password if it's provided
